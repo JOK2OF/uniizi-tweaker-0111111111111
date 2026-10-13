@@ -1,0 +1,54 @@
+<UserControl x:Class="UniiziTweaker01.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:UniiziTweaker01.Controls"
+             Style="{StaticResource PageStyle}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,12,16">
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Dashboard" Style="{StaticResource TitleText}"/>
+                    <TextBlock Text="{Binding LastUpdateText}" Style="{StaticResource CaptionText}" Margin="0,4,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="{Binding PauseButtonText}" Command="{Binding TogglePauseCommand}"
+                        Style="{StaticResource GhostButton}" VerticalAlignment="Center"/>
+            </Grid>
+
+            <UniformGrid Columns="3">
+                <c:StatCard Title="CPU USAGE" Value="{Binding CpuText}" Subtitle="{Binding CpuSubtitle}" Percent="{Binding CpuPercent}" HasBar="True"/>
+                <c:StatCard Title="MEMORY (RAM)" Value="{Binding RamText}" ValueSize="20" Subtitle="{Binding RamSubtitle}" Percent="{Binding RamPercent}" HasBar="True"/>
+                <c:StatCard Title="SYSTEM DRIVE" Value="{Binding DiskText}" Subtitle="{Binding DiskSubtitle}" Percent="{Binding DiskPercent}" HasBar="True"/>
+                <c:StatCard Title="GPU" Value="{Binding GpuText}" ValueSize="20" Subtitle="{Binding GpuSubtitle}"/>
+                <c:StatCard Title="TEMPERATURES" Value="{Binding TemperatureText}" ValueSize="20" Subtitle="{Binding TemperatureSubtitle}"/>
+                <c:StatCard Title="ACTIVE PROCESSES" Value="{Binding ProcessText}"/>
+            </UniformGrid>
+
+            <UniformGrid Columns="2" Margin="0,2,0,0">
+                <Border Style="{StaticResource CardStyle}" Margin="6">
+                    <StackPanel>
+                        <TextBlock Text="CPU — last 60 seconds" Style="{StaticResource CaptionText}" FontWeight="SemiBold"/>
+                        <c:SparklineChart Height="130" Margin="0,10,0,0" Values="{Binding CpuHistory}" Stroke="{StaticResource BlueBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource CardStyle}" Margin="6">
+                    <StackPanel>
+                        <TextBlock Text="RAM — last 60 seconds" Style="{StaticResource CaptionText}" FontWeight="SemiBold"/>
+                        <c:SparklineChart Height="130" Margin="0,10,0,0" Values="{Binding RamHistory}" Stroke="{StaticResource NeonBrush}"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <UniformGrid Columns="3" Margin="0,2,0,0">
+                <c:StatCard Title="WINDOWS" Value="{Binding WindowsText}" ValueSize="15"/>
+                <c:StatCard Title="DESKTOP RESOLUTION" Value="{Binding DisplayText}" ValueSize="15" Subtitle="{Binding DisplaySubtitle}"/>
+                <c:StatCard Title="ACTIVE POWER PLAN" Value="{Binding PowerPlanText}" ValueSize="15"/>
+                <c:StatCard Title="UPTIME" Value="{Binding UptimeText}" ValueSize="15"/>
+                <c:StatCard Title="STARTUP ENTRIES" Value="{Binding StartupText}" ValueSize="15" Subtitle="Registry Run keys only (Startup folder and scheduled tasks are not counted yet)."/>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

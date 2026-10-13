@@ -1,0 +1,17 @@
+<UserControl x:Class="UniiziTweaker01.Controls.StatCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:UniiziTweaker01.Controls"
+             x:Name="Root">
+    <Border Style="{StaticResource CardStyle}" Margin="6">
+        <StackPanel>
+            <TextBlock Text="{Binding Title, ElementName=Root}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Value, ElementName=Root}" Style="{StaticResource ValueText}"
+                       FontSize="{Binding ValueSize, ElementName=Root}" Margin="0,8,0,4"/>
+            <TextBlock Text="{Binding Subtitle, ElementName=Root}" Style="{StaticResource CaptionText}"/>
+            <ProgressBar Style="{StaticResource ThinProgress}" Maximum="100" Margin="0,12,0,0"
+                         c:ProgressAnimator.Target="{Binding Percent, ElementName=Root}"
+                         Visibility="{Binding HasBar, ElementName=Root, Converter={StaticResource BoolToVis}}"/>
+        </StackPanel>
+    </Border>
+</UserControl>
