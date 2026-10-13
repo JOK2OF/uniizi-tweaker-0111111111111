@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace UniiziTweaker01.Infrastructure;
 
 /// <summary>Minimal file logger (%LocalAppData%\UNIIZI\TWEAKER01\logs). Never throws.</summary>
