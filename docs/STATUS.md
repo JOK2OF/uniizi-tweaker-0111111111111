@@ -1,34 +1,40 @@
-# Implementation status (build step 1 of 10)
+# UNIIZI TWEAKER 01 - status
 
-Legend: DONE = implemented in source (not yet run on Windows) / TODO = not started.
+Legend: DONE = built green by GitHub Actions. WRITTEN = code exists but has NOT been compiled or run yet.
+Nothing marked WRITTEN may be assumed to work until a green Actions run and a manual test confirm it.
 
+## Steps
 | # | Module | State |
 |---|--------|-------|
-| 1 | Base app, navigation, black/blue theme, page fade, borderless window | DONE (untested on Windows) |
-| 2 | Dashboard: real CPU, RAM, system drive, process count, uptime, Windows version, resolution, power plan, startup count (Run keys), pause, 60 s charts | DONE (untested on Windows) |
-| 3 | Resolution Manager: detect displays, supported modes/refresh rates (from Windows), CDS_TEST validation, verify after apply, 15 s auto-revert, Keep/Revert, revert on exit | DONE (untested on Windows) |
-| 4 | Cache Cleaner | TODO |
-| 5 | Memory & Process manager | TODO |
-| 6 | Gaming Optimizer, profiles, Windows Tweaks, Quick Boost | TODO |
+| 1 | Base shell (borderless window, 14-page sidebar, theme, transitions) | DONE |
+| 2 | Dashboard (CPU, RAM, disk, processes, uptime, Windows version, resolution, power plan, startup count, 2 graphs) | DONE - confirmed on a real PC (Windows 11 25H2) |
+| 3 | Resolution Manager (detect, CDS_TEST, temporary apply, 15 s auto-revert, Keep/Revert) | DONE (builds green) - NOT yet manually tested |
+| 4 | Cache Cleaner | WRITTEN - Core logic + tests + service + view model + view. Not yet wired into MainViewModel / MainWindow.xaml, not compiled, not tested |
+| 5 | Memory and processes | TODO |
+| 6 | Gaming Optimizer, profiles, Quick Boost | TODO |
 | 7 | Startup Manager | TODO |
 | 8 | Network Tools | TODO |
 | 9 | Game Profiles | TODO |
-| 10 | Restore Center, Settings, About, log export, broader tests | TODO |
+| 10 | Restore Center, Settings, About, logs, System Monitor, final tests | TODO |
 
-## Known gaps inside finished modules
+## Step 4 - Cache Cleaner details
+Categories (fixed list, nothing else can be added at runtime): user temp (3 days old), Chrome / Edge / Brave / Firefox caches
+(separate), Steam and Epic web caches, GPU shader caches (caution, off by default), crash dumps (7 days), old Windows error
+reports (30 days, system part may need admin), Recycle Bin (only after an extra explicit confirmation).
 
-- GPU load/memory/temperature and CPU temperature show "Unavailable" (needs a sensor library; planned).
-- Dashboard time-range selection, sampling-interval setting and reduced-motion toggle are not built yet
-  (`ProgressAnimator.AnimationsEnabled` is the hook for reduced motion).
-- Startup count only covers registry Run keys.
-- Display scaling is not read yet; custom resolutions via GPU drivers are not implemented.
-- No app icon yet; exe is unsigned.
-- Sidebar entries for TODO modules are marked "SOON" and open a page without buttons.
+Safety rules implemented in `CleanupPolicy` (Core, unit tested): allowed roots only, no symbolic links / junctions followed,
+no drive roots, no Windows / Program Files / Documents / Downloads / Desktop / Saved Games, protected names (cookies, login data,
+browser profiles data, password files, saves), system and read-only files skipped, minimum age, locked files skipped and reported.
+One scan or clean at a time. All work runs off the UI thread. Report shows real counts: files deleted, bytes (sum of deleted file
+sizes), skipped items with the reason, error details, per-category lines. History: `%LocalAppData%\UNIIZI\TWEAKER01\cache-cleaner-history.json`.
 
-## Verification done so far
+Known limits: sizes are logical file sizes (not size on disk); progress is a counter, not a percentage (total unknown);
+the scan is an estimate and the real result can differ; the log (AppLog) is not wired in yet.
 
-- Core logic compiled and its assertions executed on Linux (all passed).
-- Services and view models compile-checked on Linux against small stubs of WPF-only types.
-- XAML/XML files are well-formed.
-- NOT verified: WPF compile, running on Windows, real display changes. The GitHub Actions workflow is the
-  first real validation.
+## Known gaps in earlier steps
+- GPU load / VRAM / temperatures and CPU temperature show "Unavailable" (needs a sensor library, e.g. LibreHardwareMonitor; some values will stay unavailable without admin rights).
+- Dashboard: no time-range selector, no sampling-interval setting; startup counter only counts registry Run keys.
+- Resolution Manager: no DPI scaling; custom resolutions through the GPU driver are not implemented.
+- No app icon (.ico), exe not code-signed (SmartScreen warning is expected).
+- Separate admin helper for privileged operations does not exist yet (to design before steps 6-8).
+- Workflow smoke test is `continue-on-error`; check whether it really passes and then make it blocking.

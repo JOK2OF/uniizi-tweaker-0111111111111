@@ -1,0 +1,106 @@
+<UserControl x:Class="UniiziTweaker01.Views.CacheCleanerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,24,28,28">
+            <TextBlock Text="Cache Cleaner" FontSize="26" FontWeight="SemiBold" Foreground="#E6EDF7"/>
+            <TextBlock Margin="0,6,0,16" TextWrapping="Wrap" Foreground="#8FA3C0"
+                       Text="Scan first, review what would be removed, then confirm. Only the listed cache and temporary locations are ever touched; documents, downloads, game saves, passwords, cookies and browser profiles are never deleted."/>
+
+            <Border Style="{DynamicResource CardStyle}" Padding="18">
+                <ItemsControl ItemsSource="{Binding Categories}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="0,10" BorderThickness="0,0,0,1" BorderBrush="#1A2438">
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanEdit}" VerticalContentAlignment="Top">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Foreground="#E6EDF7"/>
+                                            <TextBlock Text="{Binding RiskText}" Margin="10,2,0,0" FontSize="11">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#6FE3A0"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsCaution}" Value="True">
+                                                                <Setter Property="Foreground" Value="#FFB84D"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="#8FA3C0" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Note}" TextWrapping="Wrap" Foreground="#FFB84D" Margin="0,2,0,0"
+                                                   Visibility="{Binding HasNote, Converter={StaticResource BoolToVis}}"/>
+                                        <TextBlock Text="{Binding ResultText}" TextWrapping="Wrap" Foreground="#00C8FF" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <Button Content="Scan" Command="{Binding ScanCommand}" Style="{DynamicResource PrimaryButton}" MinWidth="120" Margin="0,0,10,0"/>
+                <Button Content="Clean selected..." Command="{Binding CleanCommand}" Style="{DynamicResource PrimaryButton}" MinWidth="150" Margin="0,0,10,0"/>
+                <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{DynamicResource GhostButton}" MinWidth="100"/>
+            </StackPanel>
+
+            <ProgressBar Style="{DynamicResource ThinProgress}" IsIndeterminate="True" Margin="0,14,0,0"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+            <TextBlock Text="{Binding ProgressText}" Foreground="#8FA3C0" Margin="0,6,0,0" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Status}" Foreground="#E6EDF7" Margin="0,10,0,0" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding ScanSummary}" Foreground="#8FA3C0" Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+            <Border Style="{DynamicResource CardStyle}" Padding="18" Margin="0,16,0,0"
+                    Visibility="{Binding ShowConfirm, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="Confirm cleanup" FontSize="18" FontWeight="SemiBold" Foreground="#E6EDF7"/>
+                    <TextBlock Text="{Binding ConfirmText}" Foreground="#C9D6EA" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    <CheckBox Margin="0,12,0,0" IsChecked="{Binding RecycleAck, Mode=TwoWay}"
+                              Visibility="{Binding RecycleBinSelected, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Foreground="#FFB84D" TextWrapping="Wrap" Margin="6,0,0,0"
+                                   Text="I understand the Recycle Bin will be emptied permanently and its files cannot be recovered."/>
+                    </CheckBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <Button Content="Delete now" Command="{Binding ConfirmCommand}" Style="{DynamicResource PrimaryButton}" MinWidth="130" Margin="0,0,10,0"/>
+                        <Button Content="Go back" Command="{Binding BackCommand}" Style="{DynamicResource GhostButton}" MinWidth="100"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}" Padding="18" Margin="0,16,0,0"
+                    Visibility="{Binding ShowReport, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="Cleanup report" FontSize="18" FontWeight="SemiBold" Foreground="#E6EDF7"/>
+                    <ItemsControl ItemsSource="{Binding ReportLines}" Margin="0,8,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="#C9D6EA" Margin="0,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}" Padding="18" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="History (last 10 cleanups)" FontSize="18" FontWeight="SemiBold" Foreground="#E6EDF7"/>
+                    <TextBlock Text="No cleanup has been run yet." Foreground="#8FA3C0" Margin="0,8,0,0"
+                               Visibility="{Binding HistoryEmpty, Converter={StaticResource BoolToVis}}"/>
+                    <ItemsControl ItemsSource="{Binding HistoryLines}" Margin="0,8,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="#C9D6EA" Margin="0,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
