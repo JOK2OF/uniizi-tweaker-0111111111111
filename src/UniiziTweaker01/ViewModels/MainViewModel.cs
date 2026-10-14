@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using UniiziTweaker01.Infrastructure;
 using UniiziTweaker01.Services;
+using UniiziTweaker01.Views;
 
 namespace UniiziTweaker01.ViewModels;
 
@@ -18,6 +19,8 @@ public sealed class MainViewModel : ObservableObject
     {
         Dashboard = new DashboardViewModel(new SystemMonitorService());
         Resolution = new ResolutionViewModel(new DisplayService());
+        CacheCleaner = new CacheCleanerViewModel();
+        var cacheCleanerView = new CacheCleanerView { DataContext = CacheCleaner };
 
         Items = new ObservableCollection<NavItem>
         {
@@ -25,7 +28,7 @@ public sealed class MainViewModel : ObservableObject
             new("Quick Boost", "\uE945", Pending("Quick Boost", "One-click optimization preview with per-action configuration and a results report.", "Step 6 (after the Cache Cleaner and Gaming Optimizer exist)"), false),
             new("Gaming Optimization", "\uE7FC", Pending("Gaming Optimization", "Windows gaming settings shortcuts and the Balanced / Gaming / Max Performance / Custom profiles.", "Step 6"), false),
             new("Memory & Processes", "\uE950", Pending("Memory & Processes", "Memory details, process list with confirmation before closing normal user applications.", "Step 5"), false),
-            new("Cache Cleaner", "\uE74D", Pending("Cache Cleaner", "Scan-then-clean with per-category selection, safety rules, history and exact byte reports.", "Step 4"), false),
+            new("Cache Cleaner", "\uE74D", cacheCleanerView, true),
             new("Resolution Manager", "\uE7F4", Resolution, true),
             new("Windows Tweaks", "\uE713", Pending("Windows Tweaks", "Documented, reversible tweaks with backups and an undo button for each.", "Step 6"), false),
             new("Startup Manager", "\uE768", Pending("Startup Manager", "List, enable and disable startup entries with confirmation.", "Step 7"), false),
@@ -44,6 +47,7 @@ public sealed class MainViewModel : ObservableObject
 
     public DashboardViewModel Dashboard { get; }
     public ResolutionViewModel Resolution { get; }
+    public CacheCleanerViewModel CacheCleaner { get; }
     public ObservableCollection<NavItem> Items { get; }
     public string WindowsStatus { get; }
     public string ProfileText => "Profile: none active";
